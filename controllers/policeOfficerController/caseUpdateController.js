@@ -6,15 +6,18 @@ const updateCase = async (req, res) => {
 
     const { id } = req.params;
 
-    const updatedCase = await Case.findByIdAndUpdate(
-      id,
+    const updatedCase = await Case.findOneAndUpdate(
+      {
+        _id: id,
+        officer: req.user._id
+      },
       req.body,
       { new: true }
     );
 
     if (!updatedCase) {
       return res.status(404).json({
-        message: "Case not found"
+        message: "Case not found or not assigned to you"
       });
     }
 

@@ -5,7 +5,7 @@ const trackCases = async (req, res) => {
   try {
 
     const trackedCases = await TrackCase
-      .find()
+      .find({ stationId: req.user.stationId })
       .populate("caseId")
       .populate("officerId");
 

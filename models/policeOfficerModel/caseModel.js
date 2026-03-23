@@ -2,41 +2,30 @@ const mongoose = require("mongoose");
 
 const caseSchema = new mongoose.Schema({
 
-    caseTitle: {
-        type: String,
-        required: true
-    },
+  caseTitle: String,
+  description: String,
+  crimeType: String,
+  location: String,
 
-    description: {
-        type: String,
-        required: true
-    },
+  officer: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Officer"
+  },
 
-    crimeType: {
-        type: String,
-        required: true
-    },
+  stationId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "PoliceStation"
+  },
 
-    location: {
-        type: String,
-        required: true
-    },
+  status: {
+    type: String,
+    default: "Reported"
+  },
 
-    status: {
-        type: String,
-        enum: ["Open", "Under Investigation", "Closed"],
-        default: "Open"
-    },
-
-    officer: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Officer"
-    },
-
-    createdAt: {
-        type: Date,
-        default: Date.now
-    }
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
 
 });
 

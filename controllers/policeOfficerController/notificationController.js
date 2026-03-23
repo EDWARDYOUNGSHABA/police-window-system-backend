@@ -4,9 +4,11 @@ const getNotifications = async (req, res) => {
 
   try {
 
-    const notifications = await Notification.find({
-      officer: req.user._id
-    }).sort({ createdAt: -1 });
+    const notifications = await Notification
+      .find({
+        officer: req.user._id
+      })
+      .sort({ createdAt: -1 });
 
     res.status(200).json(notifications);
 

@@ -1,7 +1,7 @@
 // middleware/policeStationAdminMiddleware/policeStationAdminAuthMiddleware.js
 
 const jwt = require("jsonwebtoken");
-const StationAdmin = require("../../models/headquartersModel/createStationAdminModel");
+const StationAdmin = require("../../models/headquartersModel/stationAdminModel");
 
 const stationAdminAuth = async (req, res, next) => {
 

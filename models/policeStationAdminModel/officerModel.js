@@ -22,6 +22,12 @@ const officerSchema = new mongoose.Schema({
     required: true
   },
 
+  stationId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "PoliceStation",
+    required: true
+  },
+
   role: {
     type: String,
     default: "officer"

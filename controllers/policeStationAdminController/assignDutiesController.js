@@ -1,13 +1,20 @@
 const Case = require("../../models/policeOfficerModel/caseModel");
 
 const assignDuty = async (req, res) => {
+
   try {
 
     const { caseId, officerId } = req.body;
 
-    const updatedCase = await Case.findByIdAndUpdate(
-      caseId,
-      { officer: officerId, status: "Under Investigation" },
+    const updatedCase = await Case.findOneAndUpdate(
+      {
+        _id: caseId,
+        stationId: req.user.stationId
+      },
+      {
+        officer: officerId,
+        status: "Under Investigation"
+      },
       { new: true }
     );
 
@@ -17,8 +24,14 @@ const assignDuty = async (req, res) => {
     });
 
   } catch (error) {
-    res.status(500).json({ message: error.message });
+
+    res.status(500).json({
+      message: "Error assigning duty",
+      error: error.message
+    });
+
   }
+
 };
 
 module.exports = assignDuty;

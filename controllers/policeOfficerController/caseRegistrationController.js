@@ -1,6 +1,7 @@
 const Case = require("../../models/policeOfficerModel/caseModel");
 
 const registerCase = async (req, res) => {
+
   try {
 
     const { caseTitle, description, crimeType, location } = req.body;
@@ -10,7 +11,8 @@ const registerCase = async (req, res) => {
       description,
       crimeType,
       location,
-      officer: req.user._id
+      officer: req.user._id,
+      stationId: req.user.stationId
     });
 
     await newCase.save();
@@ -28,6 +30,7 @@ const registerCase = async (req, res) => {
     });
 
   }
+
 };
 
 module.exports = registerCase;

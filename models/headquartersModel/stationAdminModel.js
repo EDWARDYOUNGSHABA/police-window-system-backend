@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const stationAdminSchema = new mongoose.Schema({
+
   name: {
     type: String,
     required: true
@@ -32,6 +33,7 @@ const stationAdminSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   }
+
 });
 
 module.exports = mongoose.model("StationAdmin", stationAdminSchema);
