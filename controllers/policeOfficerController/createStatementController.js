@@ -2,14 +2,18 @@ const Statement = require("../../models/policeOfficerModel/statementModel");
 const Case = require("../../models/policeOfficerModel/caseModel");
 
 const createStatement = async (req, res) => {
-
   try {
+    const { caseId, statementText, officerId, stationId } = req.body;
 
-    const { caseId, statementText } = req.body;
+    if (!caseId || !statementText || !officerId || !stationId) {
+      return res.status(400).json({
+        message: "caseId, statementText, officerId and stationId are required"
+      });
+    }
 
     const caseRecord = await Case.findOne({
       _id: caseId,
-      stationId: req.user.stationId
+      stationId: stationId
     });
 
     if (!caseRecord) {
@@ -20,7 +24,7 @@ const createStatement = async (req, res) => {
 
     const newStatement = new Statement({
       caseId,
-      officer: req.user._id,
+      officer: officerId,
       statementText
     });
 
@@ -32,14 +36,11 @@ const createStatement = async (req, res) => {
     });
 
   } catch (error) {
-
     res.status(500).json({
       message: "Error creating statement",
       error: error.message
     });
-
   }
-
 };
 
 module.exports = createStatement;

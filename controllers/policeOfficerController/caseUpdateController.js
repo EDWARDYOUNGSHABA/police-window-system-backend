@@ -1,15 +1,21 @@
 const Case = require("../../models/policeOfficerModel/caseModel");
 
 const updateCase = async (req, res) => {
-
   try {
 
     const { id } = req.params;
+    const { officerId } = req.body;
+
+    if (!officerId) {
+      return res.status(400).json({
+        message: "officerId is required"
+      });
+    }
 
     const updatedCase = await Case.findOneAndUpdate(
       {
         _id: id,
-        officer: req.user._id
+        officer: officerId
       },
       req.body,
       { new: true }
@@ -17,7 +23,7 @@ const updateCase = async (req, res) => {
 
     if (!updatedCase) {
       return res.status(404).json({
-        message: "Case not found or not assigned to you"
+        message: "Case not found or not assigned to this officer"
       });
     }
 
@@ -27,14 +33,11 @@ const updateCase = async (req, res) => {
     });
 
   } catch (error) {
-
     res.status(500).json({
       message: "Error updating case",
       error: error.message
     });
-
   }
-
 };
 
 module.exports = updateCase;

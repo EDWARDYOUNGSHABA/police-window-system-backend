@@ -6,6 +6,6 @@ const router = express.Router();
 const getOfficerDashboard = require("../../controllers/policeOfficerController/policeOfficerDashboardController");
 
 // Officer dashboard statistics
-router.get("/dashboard", getOfficerDashboard);
+router.get("/", getOfficerDashboard);
 
 module.exports = router;

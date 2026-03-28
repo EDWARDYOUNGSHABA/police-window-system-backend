@@ -3,6 +3,6 @@ const router = express.Router();
 
 const assignDuty = require("../../controllers/policeStationAdminController/assignDutiesController");
 
-router.post("/assign-duty", assignDuty);
+router.post("/", assignDuty);
 
 module.exports = router;

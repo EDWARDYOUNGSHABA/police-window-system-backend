@@ -2,10 +2,15 @@ const Case = require("../../models/policeOfficerModel/caseModel");
 const Notification = require("../../models/policeOfficerModel/notificationModel");
 
 const getOfficerDashboard = async (req, res) => {
-
   try {
 
-    const officerId = req.user._id;
+    const { officerId } = req.body;
+
+    if (!officerId) {
+      return res.status(400).json({
+        message: "officerId is required"
+      });
+    }
 
     // Case statistics
     const totalCases = await Case.countDocuments({
@@ -43,14 +48,11 @@ const getOfficerDashboard = async (req, res) => {
     });
 
   } catch (error) {
-
     res.status(500).json({
       message: "Error loading dashboard",
       error: error.message
     });
-
   }
-
 };
 
 module.exports = getOfficerDashboard;

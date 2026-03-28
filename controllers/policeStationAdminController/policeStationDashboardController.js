@@ -2,22 +2,23 @@ const Officer = require("../../models/policeStationAdminModel/officerModel");
 const Case = require("../../models/policeOfficerModel/caseModel");
 
 const getStationDashboard = async (req, res) => {
-
   try {
 
-    const stationId = req.user.stationId;
+    const { stationId } = req.query;
 
-    // Total officers in this station
-    const totalOfficers = await Officer.countDocuments({
-      stationId
-    });
+    if (!stationId) {
+      return res.status(400).json({
+        message: "stationId is required"
+      });
+    }
 
-    // Total cases in this station
-    const totalCases = await Case.countDocuments({
-      stationId
-    });
+    // Total officers
+    const totalOfficers = await Officer.countDocuments({ stationId });
 
-    // Cases under investigation
+    // Total cases
+    const totalCases = await Case.countDocuments({ stationId });
+
+    // Investigation cases
     const investigationCases = await Case.countDocuments({
       stationId,
       status: "Under Investigation"
@@ -29,14 +30,14 @@ const getStationDashboard = async (req, res) => {
       status: "Closed"
     });
 
-    // Recent cases (last 5)
+    // Recent cases
     const recentCases = await Case
       .find({ stationId })
       .populate("officer", "name badgeNumber")
       .sort({ createdAt: -1 })
       .limit(5);
 
-    res.status(200).json({
+    return res.status(200).json({
       stationId,
       totalOfficers,
       totalCases,
@@ -46,14 +47,11 @@ const getStationDashboard = async (req, res) => {
     });
 
   } catch (error) {
-
-    res.status(500).json({
+    return res.status(500).json({
       message: "Error loading station dashboard",
       error: error.message
     });
-
   }
-
 };
 
 module.exports = getStationDashboard;

@@ -5,83 +5,80 @@ const connectDB = require("./config/db");
 
 const app = express();
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Connect DB
 connectDB();
 
-// ===== COMMON MIDDLEWARE =====
-const authMiddleware = require("./middleware/commonMiddleware/authMiddleware");
-const roleMiddleware = require("./middleware/commonMiddleware/roleMiddleware");
+// ================= ROUTES =================
 
-// ================= AUTH ROUTES =================
+// AUTH
 const loginRoutes = require("./routes/authRoutes/loginRoutes");
 const logoutRoutes = require("./routes/authRoutes/logoutRoutes");
 
-app.use("/api/auth/login", loginRoutes);
-app.use("/api/auth/logout", logoutRoutes);
+app.use("/api/auth", loginRoutes);
+app.use("/api/auth", logoutRoutes);
 
-// ================= HEADQUARTERS =================
+// HEADQUARTERS
 const createPoliceStationRoutes = require("./routes/headquartersRoutes/policeStationRoutes");
 const stationAdminRoutes = require("./routes/headquartersRoutes/stationAdminRoutes");
 const headquartersDashboardRoutes = require("./routes/headquartersRoutes/headQuarterDashboardRoutes");
 const headquartersAccountRoutes = require("./routes/headQuartersRoutes/headquartersAccountRoutes");
-
-app.use("/api/hq", authMiddleware, roleMiddleware("headquarters"));
 
 app.use("/api/hq/stations", createPoliceStationRoutes);
 app.use("/api/hq/admins", stationAdminRoutes);
 app.use("/api/hq/dashboard", headquartersDashboardRoutes);
 app.use("/api/hq/accounts", headquartersAccountRoutes);
 
-// ================= POLICE OFFICER =================
-const caseRegistrationRoutes = require("./routes/policeOfficerRoutes/caseRegistrationRoutes");
-const caseUpdateRoutes = require("./routes/policeOfficerRoutes/caseUpdateRoutes");
-const createStatementRoutes = require("./routes/policeOfficerRoutes/createStatementRoutes");
-const notificationRoutes = require("./routes/policeOfficerRoutes/notificationRoutes");
-const policeOfficerDashboardRoutes = require("./routes/policeOfficerRoutes/policeOfficerDashboardRoutes");
-const officerViewCasesRoutes = require("./routes/policeOfficerRoutes/viewCasesRoutes");
+// OFFICERS (ADMIN SIDE)
+const officerRoutes = require("./routes/policeStationAdminRoutes/OfficerRoutes");
+app.use("/api/admin/officers", officerRoutes);
 
-app.use("/api/officer", authMiddleware, roleMiddleware("officer"));
-
-app.use("/api/officer/cases", caseRegistrationRoutes);
-app.use("/api/officer/cases/update", caseUpdateRoutes);
-app.use("/api/officer/statements", createStatementRoutes);
-app.use("/api/officer/notifications", notificationRoutes);
-app.use("/api/officer/dashboard", policeOfficerDashboardRoutes);
-app.use("/api/officer/cases/view", officerViewCasesRoutes);
-
-// ================= ADMIN =================
+// OTHER ADMIN ROUTES
 const assignDutiesRoutes = require("./routes/policeStationAdminRoutes/assignDutiesRoutes");
-const createOfficersRoutes = require("./routes/policeStationAdminRoutes/createOfficersRoutes");
 const adminViewCasesRoutes = require("./routes/policeStationAdminRoutes/viewCasesRoutes");
-const manageOfficersRoutes = require("./routes/policeStationAdminRoutes/manageOfficersRoutes");
 const trackCasesRoutes = require("./routes/policeStationAdminRoutes/trackCasesRoutes");
 const policeStationDashboardRoutes = require("./routes/policeStationAdminRoutes/policeStationDashboardRoutes");
 
-app.use("/api/admin", authMiddleware, roleMiddleware("stationAdmin"));
-
 app.use("/api/admin/duties", assignDutiesRoutes);
-app.use("/api/admin/officers", createOfficersRoutes);
 app.use("/api/admin/cases", adminViewCasesRoutes);
-app.use("/api/admin/officers/manage", manageOfficersRoutes);
 app.use("/api/admin/cases/track", trackCasesRoutes);
 app.use("/api/admin/dashboard", policeStationDashboardRoutes);
 
-// Test route
-app.get("/", (req, res) => res.send("Police Window System API Running"));
+// ================= OFFICER SIDE =================
 
-// 404 Handler
+// CASES (ALL case routes use SAME base path)
+const caseRegistrationRoutes = require("./routes/policeOfficerRoutes/caseRegistrationRoutes");
+const caseUpdateRoutes = require("./routes/policeOfficerRoutes/caseUpdateRoutes");
+const officerViewCasesRoutes = require("./routes/policeOfficerRoutes/viewCasesRoutes");
+// CASES (OFFICER SIDE)
+app.use("/api/officer/cases/register", caseRegistrationRoutes);
+app.use("/api/officer/cases/update", caseUpdateRoutes);
+app.use("/api/officer/cases/view", officerViewCasesRoutes);
+
+// OTHER OFFICER FEATURES
+const createStatementRoutes = require("./routes/policeOfficerRoutes/createStatementRoutes");
+const notificationRoutes = require("./routes/policeOfficerRoutes/notificationRoutes");
+const policeOfficerDashboardRoutes = require("./routes/policeOfficerRoutes/policeOfficerDashboardRoutes");
+
+app.use("/api/officer/statements", createStatementRoutes);
+app.use("/api/officer/notifications", notificationRoutes);
+app.use("/api/officer/dashboard", policeOfficerDashboardRoutes);
+
+// ROOT
+app.get("/", (req, res) => {
+  res.send("Police Window System API Running");
+});
+
+// 404
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });
 });
 
-// Global Error Handler
+// ERROR HANDLER
 const errorMiddleware = require("./middleware/commonMiddleware/errorMiddleware");
 app.use(errorMiddleware);
 
-// Start server
+// START SERVER
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

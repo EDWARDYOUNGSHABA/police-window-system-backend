@@ -3,6 +3,6 @@ const router = express.Router();
 
 const trackCases = require("../../controllers/policeStationAdminController/trackCasesController");
 
-router.get("/track-cases", trackCases);
+router.get("/", trackCases);
 
 module.exports = router;
